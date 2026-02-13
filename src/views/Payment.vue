@@ -85,13 +85,6 @@
                 class="bg-gray-50 dark:bg-black/30 border border-gray-200 dark:border-white/10 rounded-2xl p-6 flex flex-col items-center justify-center text-center">
                 <div class="text-sm text-gray-500 mb-4">{{ t('payment.qrTitle') }}</div>
                 <img :src="qrImageUrl" alt="QR Code" class="w-56 h-56 object-contain" />
-                <div v-if="paymentResult.pay_url" class="mt-4 flex flex-wrap items-center justify-center gap-2">
-                  <button @click="handleCopyPayLink"
-                    class="px-3 py-1.5 rounded-lg bg-white text-black font-bold text-xs hover:bg-gray-200">
-                    {{ t('payment.copyPayLink') }}
-                  </button>
-                  <span v-if="copied" class="text-xs text-emerald-500">{{ t('payment.copied') }}</span>
-                </div>
               </div>
 
               <div v-else class="bg-gray-50 dark:bg-black/30 border border-gray-200 dark:border-white/10 rounded-2xl p-6">
@@ -868,8 +861,9 @@ const captureStripeIfNeeded = async () => {
 }
 
 const syncEpayReturnIfNeeded = async () => {
-  const returnFlag = String(route.query.epay_return || '').toLowerCase()
-  if (returnFlag !== '1') return
+  const epayReturn = String(route.query.epay_return || '').toLowerCase()
+  
+  if (epayReturn !== '1') return
   if (!orderNoQuery.value) return
 
   try {
