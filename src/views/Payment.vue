@@ -85,42 +85,6 @@
                 class="bg-gray-50 dark:bg-black/30 border border-gray-200 dark:border-white/10 rounded-2xl p-6 flex flex-col items-center justify-center text-center">
                 <div class="text-sm text-gray-500 mb-4">{{ t('payment.qrTitle') }}</div>
                 <img :src="qrImageUrl" alt="QR Code" class="w-56 h-56 object-contain" />
-                
-                <!-- 显示收款地址 -->
-                <div v-if="paymentResult.qr_code" class="mt-4 w-full max-w-md space-y-3">
-                  <!-- 支付金额 -->
-                  <div v-if="cryptoAmount" class="bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 rounded-lg p-4">
-                    <div class="text-xs text-gray-500 dark:text-gray-400 mb-1">{{ t('payment.paymentAmount') || '支付金额' }}</div>
-                    <div class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
-                      {{ cryptoAmount }} {{ cryptoCurrency }}
-                    </div>
-                  </div>
-                  
-                  <!-- 收款地址 -->
-                  <div>
-                    <div class="text-xs text-gray-500 mb-2">{{ t('payment.paymentAddress') || '收款地址' }}</div>
-                    <div class="bg-white dark:bg-black/40 border border-gray-200 dark:border-white/10 rounded-lg p-3 break-all text-sm text-gray-700 dark:text-gray-300">
-                      {{ paymentResult.qr_code }}
-                    </div>
-                  </div>
-                  
-                  <div class="flex flex-wrap items-center justify-center gap-2">
-                    <button @click="handleCopyAddress"
-                      class="px-4 py-2 rounded-lg bg-white text-black font-bold text-sm hover:bg-gray-200">
-                      {{ t('payment.copyAddress') || '复制地址' }}
-                    </button>
-                    <span v-if="addressCopied" class="text-xs text-emerald-500">{{ t('payment.copied') }}</span>
-                  </div>
-                </div>
-                
-                <!-- 原有的支付链接复制按钮（如果有） -->
-                <div v-else-if="paymentResult.pay_url" class="mt-4 flex flex-wrap items-center justify-center gap-2">
-                  <button @click="handleCopyPayLink"
-                    class="px-3 py-1.5 rounded-lg bg-white text-black font-bold text-xs hover:bg-gray-200">
-                    {{ t('payment.copyPayLink') }}
-                  </button>
-                  <span v-if="copied" class="text-xs text-emerald-500">{{ t('payment.copied') }}</span>
-                </div>
               </div>
 
               <div v-else class="bg-gray-50 dark:bg-black/30 border border-gray-200 dark:border-white/10 rounded-2xl p-6">
@@ -512,34 +476,6 @@ const showQRCode = computed(() => {
   return mode === 'qr' && Boolean(paymentResult.value?.qr_code)
 })
 
-const cryptoAmount = computed(() => {
-  try {
-    const payload = paymentResult.value?.provider_payload
-    if (!payload) return ''
-    
-    // 如果 provider_payload 是字符串，需要先解析
-    let parsedPayload = payload
-    if (typeof payload === 'string') {
-      parsedPayload = JSON.parse(payload)
-    }
-    
-    // actual_amount 在 payload.data.actual_amount
-    const actualAmount = parsedPayload?.data?.actual_amount || parsedPayload?.actual_amount
-    return actualAmount ? String(actualAmount) : ''
-  } catch (err) {
-    console.error('Failed to parse crypto amount:', err, paymentResult.value?.provider_payload)
-    return ''
-  }
-})
-
-const cryptoCurrency = computed(() => {
-  const channelType = String(paymentResult.value?.channel_type || '').toLowerCase()
-  if (channelType.includes('usdt')) return 'USDT'
-  if (channelType.includes('usdc')) return 'USDC'
-  if (channelType.includes('trx')) return 'TRX'
-  return ''
-})
-
 const showPayLink = computed(() => {
   const mode = String(paymentResult.value?.interaction_mode || '').toLowerCase()
   return mode === 'redirect' || Boolean(paymentResult.value?.pay_url)
@@ -789,27 +725,6 @@ const stopPolling = () => {
   pollTimer.value = null
 }
 
-const addressCopied = ref(false)
-const addressCopiedTimer = ref<number | null>(null)
-
-const handleCopyAddress = async () => {
-  const address = String(paymentResult.value?.qr_code || '').trim()
-  if (!address) return
-  try {
-    await copyText(address)
-    addressCopied.value = true
-    if (addressCopiedTimer.value) {
-      window.clearTimeout(addressCopiedTimer.value)
-    }
-    addressCopiedTimer.value = window.setTimeout(() => {
-      addressCopied.value = false
-      addressCopiedTimer.value = null
-    }, 1500)
-  } catch (err: any) {
-    error.value = err?.message || t('payment.copyFailed')
-  }
-}
-
 const handleCopyPayLink = async () => {
   if (!payLink.value) return
   try {
@@ -947,9 +862,8 @@ const captureStripeIfNeeded = async () => {
 
 const syncEpayReturnIfNeeded = async () => {
   const epayReturn = String(route.query.epay_return || '').toLowerCase()
-  const epusdtReturn = String(route.query.epusdt_return || '').toLowerCase()
   
-  if (epayReturn !== '1' && epusdtReturn !== '1') return
+  if (epayReturn !== '1') return
   if (!orderNoQuery.value) return
 
   try {
@@ -1157,7 +1071,7 @@ watch(
 )
 
 watch(
-  () => [paymentResult.value?.payment_id, route.query.pp_return, route.query.token, route.query.payer_id, route.query.PayerID, route.query.stripe_return, route.query.session_id, route.query.epay_return, route.query.epusdt_return, order.value?.status],
+  () => [paymentResult.value?.payment_id, route.query.pp_return, route.query.token, route.query.payer_id, route.query.PayerID, route.query.stripe_return, route.query.session_id, route.query.epay_return, order.value?.status],
   () => {
     void capturePaypalIfNeeded()
     void captureStripeIfNeeded()
