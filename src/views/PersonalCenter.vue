@@ -47,7 +47,10 @@
                   : 'border theme-btn-secondary'"
               >
                 <span class="flex items-center justify-between gap-3">
-                  <span>{{ t(item.label) }}</span>
+                  <span class="flex items-center gap-2">
+                    <component :is="item.icon" class="h-4 w-4" />
+                    <span>{{ t(item.label) }}</span>
+                  </span>
                   <span
                     class="h-1.5 w-1.5 rounded-full transition-colors"
                     :class="currentSection === item.key ? 'theme-accent-stick' : 'bg-gray-300 dark:bg-gray-600 group-hover:bg-gray-400 dark:group-hover:bg-gray-500'"
@@ -68,7 +71,10 @@
                     ? 'theme-selected-surface theme-text-primary'
                     : 'border theme-btn-secondary'"
                 >
-                  {{ t(item.label) }}
+                  <span class="flex items-center gap-1.5">
+                    <component :is="item.icon" class="h-3.5 w-3.5" />
+                    <span>{{ t(item.label) }}</span>
+                  </span>
                 </button>
               </div>
             </div>
@@ -166,6 +172,8 @@
 
           <ProfilePanel v-else-if="currentSection === 'profile'" />
           <SecurityPanel v-else-if="currentSection === 'security'" />
+          <OrdersPanel v-else-if="currentSection === 'orders'" />
+          <WalletPanel v-else-if="currentSection === 'wallet'" />
           <OrdersPanel v-else />
         </section>
       </div>
@@ -174,17 +182,19 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, type Component } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { HomeIcon, ShoppingBagIcon, WalletIcon, ShieldCheckIcon, UserCircleIcon } from '@heroicons/vue/24/outline'
 import { orderStatusClass, orderStatusLabel } from '../utils/status'
 import { pageAlertClass, type PageAlert } from '../utils/alerts'
 import { useUserProfileStore } from '../stores/userProfile'
 import ProfilePanel from './personal/ProfilePanel.vue'
 import SecurityPanel from './personal/SecurityPanel.vue'
 import OrdersPanel from './personal/OrdersPanel.vue'
+import WalletPanel from './personal/WalletPanel.vue'
 
-type PersonalSection = 'overview' | 'profile' | 'security' | 'orders'
+type PersonalSection = 'overview' | 'profile' | 'security' | 'orders' | 'wallet'
 
 const props = withDefaults(defineProps<{ section?: PersonalSection }>(), {
   section: 'overview',
@@ -194,11 +204,12 @@ const router = useRouter()
 const { t } = useI18n()
 const userProfileStore = useUserProfileStore()
 
-const sectionItems: Array<{ key: PersonalSection; label: string }> = [
-  { key: 'overview', label: 'personalCenter.tabs.overview' },
-  { key: 'profile', label: 'personalCenter.tabs.profile' },
-  { key: 'security', label: 'personalCenter.tabs.security' },
-  { key: 'orders', label: 'personalCenter.tabs.orders' },
+const sectionItems: Array<{ key: PersonalSection; label: string; icon: Component }> = [
+  { key: 'overview', label: 'personalCenter.tabs.overview', icon: HomeIcon },
+  { key: 'orders', label: 'personalCenter.tabs.orders', icon: ShoppingBagIcon },
+  { key: 'wallet', label: 'personalCenter.tabs.wallet', icon: WalletIcon },
+  { key: 'security', label: 'personalCenter.tabs.security', icon: ShieldCheckIcon },
+  { key: 'profile', label: 'personalCenter.tabs.profile', icon: UserCircleIcon },
 ]
 
 const sectionRouteMap: Record<PersonalSection, string> = {
@@ -206,6 +217,7 @@ const sectionRouteMap: Record<PersonalSection, string> = {
   profile: '/me/profile',
   security: '/me/security',
   orders: '/me/orders',
+  wallet: '/me/wallet',
 }
 
 const currentSection = computed<PersonalSection>(() => props.section)

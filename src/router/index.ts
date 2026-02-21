@@ -73,6 +73,13 @@ const router = createRouter({
             meta: { requiresUserAuth: true }
         },
         {
+            path: '/me/wallet',
+            name: 'personal-center-wallet',
+            component: () => import('../views/PersonalCenter.vue'),
+            props: { section: 'wallet' },
+            meta: { requiresUserAuth: true }
+        },
+        {
             path: '/orders/:order_no',
             name: 'order-detail',
             component: () => import('../views/OrderDetail.vue'),

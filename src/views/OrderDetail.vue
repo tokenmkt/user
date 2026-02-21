@@ -67,6 +67,21 @@
               <div class="theme-text-primary font-mono mt-1">{{ formatMoney(order.total_amount,
                 order.currency) }}</div>
             </div>
+            <div v-if="hasAmount(order.wallet_paid_amount)" class="theme-surface-soft border rounded-xl p-4">
+              <div class="text-xs theme-text-muted">{{ t('orderDetail.amountWalletPaid') }}</div>
+              <div class="theme-text-primary font-mono mt-1">{{ formatMoney(order.wallet_paid_amount,
+                order.currency) }}</div>
+            </div>
+            <div v-if="hasAmount(order.online_paid_amount)" class="theme-surface-soft border rounded-xl p-4">
+              <div class="text-xs theme-text-muted">{{ t('orderDetail.amountOnlinePaid') }}</div>
+              <div class="theme-text-primary font-mono mt-1">{{ formatMoney(order.online_paid_amount,
+                order.currency) }}</div>
+            </div>
+            <div v-if="hasAmount(order.refunded_amount)" class="theme-surface-soft border rounded-xl p-4">
+              <div class="text-xs theme-text-muted">{{ t('orderDetail.amountRefunded') }}</div>
+              <div class="theme-text-primary font-mono mt-1">{{ formatMoney(order.refunded_amount,
+                order.currency) }}</div>
+            </div>
           </div>
         </div>
 
@@ -318,6 +333,12 @@ const formatMoney = (amount?: string, currency?: string) => {
 }
 
 const hasDiscountAmount = (amount?: string) => {
+  if (amount === null || amount === undefined || amount === '') return false
+  const value = Number(amount)
+  return !Number.isNaN(value) && value > 0
+}
+
+const hasAmount = (amount?: string) => {
   if (amount === null || amount === undefined || amount === '') return false
   const value = Number(amount)
   return !Number.isNaN(value) && value > 0

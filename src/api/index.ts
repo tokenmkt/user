@@ -243,6 +243,113 @@ export interface ChangeUserPasswordPayload {
     new_password: string
 }
 
+export interface WalletAccountData {
+    id: number
+    user_id: number
+    balance: string
+    created_at: string
+    updated_at: string
+}
+
+export interface WalletTransactionData {
+    id: number
+    user_id: number
+    order_id?: number | null
+    type: string
+    direction: string
+    amount: string
+    balance_before: string
+    balance_after: string
+    currency: string
+    reference: string
+    remark: string
+    created_at: string
+    updated_at: string
+}
+
+export interface WalletRechargePayload {
+    amount: string
+    channel_id: number
+    currency?: string
+    remark?: string
+}
+
+export interface WalletRechargeOrderData {
+    id: number
+    recharge_no: string
+    user_id: number
+    payment_id: number
+    channel_id: number
+    provider_type: string
+    channel_type: string
+    interaction_mode: string
+    amount: string
+    payable_amount: string
+    fee_rate: string
+    fee_amount: string
+    currency: string
+    status: string
+    remark: string
+    paid_at?: string
+    created_at: string
+    updated_at: string
+}
+
+export interface WalletRechargePaymentData {
+    id: number
+    order_id: number
+    channel_id: number
+    provider_type: string
+    channel_type: string
+    interaction_mode: string
+    amount: string
+    fee_rate: string
+    fee_amount: string
+    currency: string
+    status: string
+    pay_url?: string
+    qr_code?: string
+    expires_at?: string
+    created_at: string
+    updated_at: string
+}
+
+export interface WalletRechargeResult {
+    recharge: WalletRechargeOrderData
+    payment: WalletRechargePaymentData
+    account?: WalletAccountData
+    payment_id?: number
+    provider_type?: string
+    channel_type?: string
+    interaction_mode?: string
+    pay_url?: string
+    qr_code?: string
+    expires_at?: string
+    recharge_no?: string
+    recharge_status?: string
+}
+
+export interface CreatePaymentPayload {
+    order_id: number
+    channel_id: number
+    use_balance?: boolean
+}
+
+export interface PaymentCreateResult {
+    order_paid?: boolean
+    wallet_paid_amount?: string
+    online_pay_amount?: string
+    payment_id?: number
+    order_id?: number
+    channel_id?: number
+    provider_type?: string
+    channel_type?: string
+    interaction_mode?: string
+    pay_url?: string
+    qr_code?: string
+    expires_at?: string
+}
+
 export interface CaptchaPayload {
     captcha_id?: string
     captcha_code?: string
@@ -315,7 +422,17 @@ export const guestOrderAPI = {
 }
 
 export const paymentAPI = {
-    create: (data: any) => userApi.post<ApiResponse>('/payments', data),
+    create: (data: CreatePaymentPayload) => userApi.post<ApiResponse<PaymentCreateResult>>('/payments', data),
     capture: (id: number) => userApi.post<ApiResponse>(`/payments/${id}/capture`),
-    latest: (params: any) => userApi.get<ApiResponse>('/payments/latest', { params, silentBusinessError: true } as any),
+    latest: (params: any) => userApi.get<ApiResponse<PaymentCreateResult>>('/payments/latest', { params, silentBusinessError: true } as any),
+}
+
+export const walletAPI = {
+    account: () => userApi.get<ApiResponse<WalletAccountData>>('/wallet'),
+    transactions: (params?: any) => userApi.get<ApiResponse<WalletTransactionData[]>>('/wallet/transactions', { params }),
+    recharge: (data: WalletRechargePayload) => userApi.post<ApiResponse<WalletRechargeResult>>('/wallet/recharge', data),
+    rechargeDetail: (rechargeNo: string) =>
+        userApi.get<ApiResponse<WalletRechargeResult>>(`/wallet/recharges/${encodeURIComponent(rechargeNo)}`),
+    captureRechargePayment: (paymentID: number) =>
+        userApi.post<ApiResponse<WalletRechargeResult>>(`/wallet/recharge/payments/${paymentID}/capture`),
 }
