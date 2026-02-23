@@ -432,8 +432,48 @@ const walletLoading = ref(false)
 const walletBalance = ref('0')
 const useBalance = ref(false)
 
-const isGuest = computed(() => route.query.guest === '1' || route.query.guest === 'true')
-const orderNoQuery = computed(() => String(route.query.order_no || '').trim())
+const routeQueryValueToString = (value: unknown): string => {
+  if (Array.isArray(value)) {
+    for (const item of value) {
+      const text = String(item ?? '').trim()
+      if (text !== '') return text
+    }
+    return ''
+  }
+  return String(value ?? '').trim()
+}
+
+const readRouteQueryValue = (key: string): string => {
+  const normalizedKey = String(key || '').trim().toLowerCase()
+  if (normalizedKey === '') return ''
+
+  const query = route.query as Record<string, unknown>
+  const candidates = [key, normalizedKey, `amp;${key}`, `amp;${normalizedKey}`]
+  for (const candidate of candidates) {
+    const value = routeQueryValueToString(query[candidate])
+    if (value !== '') return value
+  }
+
+  for (const [rawKey, rawValue] of Object.entries(query)) {
+    const cleanedKey = String(rawKey || '').trim().toLowerCase().replace(/^(amp;)+/, '')
+    if (cleanedKey !== normalizedKey) continue
+    const value = routeQueryValueToString(rawValue)
+    if (value !== '') return value
+  }
+  return ''
+}
+
+const readRouteQueryFlag = (key: string): boolean => {
+  const value = readRouteQueryValue(key).toLowerCase()
+  return value === '1' || value === 'true' || value === 'yes'
+}
+
+const isGuest = computed(() => readRouteQueryFlag('guest'))
+const orderNoQuery = computed(() => {
+  const orderNo = readRouteQueryValue('order_no')
+  if (orderNo !== '') return orderNo
+  return readRouteQueryValue('out_trade_no')
+})
 const orderId = computed(() => {
   const fromOrder = Number(order.value?.id || 0)
   if (Number.isFinite(fromOrder) && fromOrder > 0) return fromOrder
@@ -874,9 +914,9 @@ const capturePaypalIfNeeded = async () => {
   const providerType = String(paymentResult.value?.provider_type || '').toLowerCase()
   const channelType = String(paymentResult.value?.channel_type || '').toLowerCase()
   if (!(providerType === 'official' && channelType === 'paypal')) return
-  const returnFlag = String(route.query.pp_return || '').toLowerCase()
-  const token = String(route.query.token || '').trim()
-  const payerId = String(route.query.payer_id || route.query.PayerID || '').trim()
+  const returnFlag = readRouteQueryValue('pp_return').toLowerCase()
+  const token = readRouteQueryValue('token')
+  const payerId = readRouteQueryValue('payer_id') || readRouteQueryValue('PayerID')
   if (returnFlag !== '1' && token === '' && payerId === '') return
   if (!orderId.value || !order.value || order.value.status !== 'pending_payment') return
 
@@ -913,8 +953,8 @@ const captureStripeIfNeeded = async () => {
   const providerType = String(paymentResult.value?.provider_type || '').toLowerCase()
   const channelType = String(paymentResult.value?.channel_type || '').toLowerCase()
   if (!(providerType === 'official' && channelType === 'stripe')) return
-  const returnFlag = String(route.query.stripe_return || '').toLowerCase()
-  const sessionID = String(route.query.session_id || '').trim()
+  const returnFlag = readRouteQueryValue('stripe_return').toLowerCase()
+  const sessionID = readRouteQueryValue('session_id')
   if (returnFlag !== '1' && sessionID === '') return
   if (!orderId.value || !order.value || order.value.status !== 'pending_payment') return
 
@@ -946,7 +986,7 @@ const captureStripeIfNeeded = async () => {
 }
 
 const syncEpayReturnIfNeeded = async () => {
-  const epayReturn = String(route.query.epay_return || '').toLowerCase()
+  const epayReturn = readRouteQueryValue('epay_return').toLowerCase()
   
   if (epayReturn !== '1') return
   if (!orderNoQuery.value) return
@@ -1181,7 +1221,7 @@ watch(
 )
 
 watch(
-  () => [paymentResult.value?.payment_id, route.query.pp_return, route.query.token, route.query.payer_id, route.query.PayerID, route.query.stripe_return, route.query.session_id, route.query.epay_return, order.value?.status],
+  () => [paymentResult.value?.payment_id, route.fullPath, order.value?.status],
   () => {
     void capturePaypalIfNeeded()
     void captureStripeIfNeeded()
