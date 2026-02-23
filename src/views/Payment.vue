@@ -388,7 +388,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { NavigationFailureType, isNavigationFailure, useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { guestOrderAPI, paymentAPI, userOrderAPI, walletAPI } from '../api'
 import { useAppStore } from '../stores/app'
@@ -428,6 +428,7 @@ const pollTimer = ref<number | null>(null)
 const countdownTimer = ref<number | null>(null)
 const now = ref(Date.now())
 const copiedTimer = ref<number | null>(null)
+const redirectTimer = ref<number | null>(null)
 const walletLoading = ref(false)
 const walletBalance = ref('0')
 const useBalance = ref(false)
@@ -1099,15 +1100,52 @@ const shouldRedirect = (status?: string) => {
   return ['paid', 'fulfilling', 'partially_delivered', 'delivered', 'completed'].includes(status)
 }
 
+const resetRedirectState = () => {
+  redirecting.value = false
+  redirected.value = false
+}
+
 const redirectToOrderDetail = () => {
-  if (redirected.value) return
+  if (redirected.value || redirecting.value) return
   const resolvedOrderNo = String(order.value?.order_no || orderNoQuery.value || '').trim()
   if (!resolvedOrderNo) return
+
+  const target = isGuest.value
+    ? { name: 'guest-order-detail', params: { order_no: resolvedOrderNo } }
+    : { name: 'order-detail', params: { order_no: resolvedOrderNo } }
+  const fallbackPath = isGuest.value
+    ? `/guest/orders/${encodeURIComponent(resolvedOrderNo)}`
+    : `/orders/${encodeURIComponent(resolvedOrderNo)}`
+  const resolvedTarget = router.resolve(target)
+  if (!resolvedTarget.matched.length) {
+    window.location.assign(fallbackPath)
+    return
+  }
+
   redirected.value = true
   redirecting.value = true
-  const target = isGuest.value ? `/guest/orders/${resolvedOrderNo}` : `/orders/${resolvedOrderNo}`
-  window.setTimeout(() => {
-    router.push(target)
+
+  if (redirectTimer.value !== null) {
+    window.clearTimeout(redirectTimer.value)
+    redirectTimer.value = null
+  }
+
+  redirectTimer.value = window.setTimeout(async () => {
+    try {
+      const failure = await router.push(target)
+      if (failure && !isNavigationFailure(failure, NavigationFailureType.duplicated)) {
+        resetRedirectState()
+        window.location.assign(fallbackPath)
+      }
+    } catch (_err) {
+      resetRedirectState()
+      window.location.assign(fallbackPath)
+    } finally {
+      if (redirectTimer.value !== null) {
+        window.clearTimeout(redirectTimer.value)
+        redirectTimer.value = null
+      }
+    }
   }, 600)
 }
 
@@ -1115,8 +1153,7 @@ const resetPayment = () => {
   paymentResult.value = null
   error.value = ''
   openedPayWindow.value = false
-  redirecting.value = false
-  redirected.value = false
+  resetRedirectState()
   latestLoaded.value = false
 }
 
@@ -1247,6 +1284,10 @@ watch(remainingMs, (value) => {
 onUnmounted(() => {
   stopPolling()
   stopCountdown()
+  if (redirectTimer.value) {
+    window.clearTimeout(redirectTimer.value)
+    redirectTimer.value = null
+  }
   if (copiedTimer.value) {
     window.clearTimeout(copiedTimer.value)
     copiedTimer.value = null
