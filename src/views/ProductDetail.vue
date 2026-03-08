@@ -142,15 +142,31 @@
                 <div class="mb-8 border-b theme-border pb-8" ref="priceSection">
                   <div class="mb-3 flex flex-wrap items-center gap-2">
                     <span class="text-sm theme-text-muted">{{ t('products.price') }}</span>
-                    <span v-if="!selectedSku && hasPromotionPrice(product)" class="theme-badge theme-badge-danger">
+                    <span v-if="(selectedSku && hasSkuPromotionPrice(selectedSku)) || (!selectedSku && hasPromotionPrice(product))" class="theme-badge theme-badge-danger">
                       {{ t('products.promotionTag') }}
                     </span>
                   </div>
-                  <div v-if="selectedSku" class="flex items-end gap-4">
+                  <!-- 选中 SKU 且有促销价 -->
+                  <div v-if="selectedSku && hasSkuPromotionPrice(selectedSku)" class="space-y-2">
+                    <div class="flex flex-wrap items-end gap-4">
+                      <span class="theme-price-lg text-rose-600 dark:text-rose-300">
+                        {{ formatPrice(getSkuPromotionPriceAmount(selectedSku), siteCurrency) }}
+                      </span>
+                      <span class="theme-price-original">
+                        {{ formatPrice(selectedSku.price_amount, siteCurrency) }}
+                      </span>
+                    </div>
+                    <p class="text-sm font-medium text-rose-500 dark:text-rose-300">
+                      {{ t('products.saveAmount') }} {{ formatPrice(getSkuPromotionSaveAmount(selectedSku), siteCurrency) }}
+                    </p>
+                  </div>
+                  <!-- 选中 SKU 但无促销价 -->
+                  <div v-else-if="selectedSku" class="flex items-end gap-4">
                     <span class="theme-price-lg theme-text-accent">
                       {{ formatPrice(selectedSku.price_amount, siteCurrency) }}
                     </span>
                   </div>
+                  <!-- 未选 SKU，产品级有促销价 -->
                   <div v-else-if="hasPromotionPrice(product)" class="space-y-2">
                     <div class="flex flex-wrap items-end gap-4">
                       <span class="theme-price-lg text-rose-600 dark:text-rose-300">
@@ -164,6 +180,7 @@
                       {{ t('products.saveAmount') }} {{ formatPrice(getPromotionSaveAmount(product), siteCurrency) }}
                     </p>
                   </div>
+                  <!-- 未选 SKU，无促销 -->
                   <div v-else class="flex items-end gap-4">
                     <span class="theme-price-lg theme-text-accent">
                       {{ formatPrice(product.price_amount, siteCurrency) }}
@@ -280,7 +297,10 @@
             <div class="flex items-center gap-3 px-4 py-3">
               <!-- Price -->
               <div class="flex-1 min-w-0">
-                <span v-if="selectedSku" class="theme-price-sm theme-text-accent truncate block">
+                <span v-if="selectedSku && hasSkuPromotionPrice(selectedSku)" class="theme-price-sm text-rose-600 dark:text-rose-300 truncate block">
+                  {{ formatPrice(getSkuPromotionPriceAmount(selectedSku), siteCurrency) }}
+                </span>
+                <span v-else-if="selectedSku" class="theme-price-sm theme-text-accent truncate block">
                   {{ formatPrice(selectedSku.price_amount, siteCurrency) }}
                 </span>
                 <span v-else-if="hasPromotionPrice(product)" class="theme-price-sm text-rose-600 dark:text-rose-300 truncate block">
@@ -355,7 +375,7 @@ const cartStore = useCartStore()
 const userAuthStore = useUserAuthStore()
 
 const { getLocalizedText, siteCurrency, formatPrice } = useLocalized()
-const { getPurchaseTypeLabel, getFulfillmentTypeLabel, getStockBadgeClass, getStockStatusLabel, hasPromotionPrice, getPromotionPriceAmount, getPromotionSaveAmount } = useProductLabels()
+const { getPurchaseTypeLabel, getFulfillmentTypeLabel, getStockBadgeClass, getStockStatusLabel, hasPromotionPrice, getPromotionPriceAmount, getPromotionSaveAmount, hasSkuPromotionPrice, getSkuPromotionPriceAmount, getSkuPromotionSaveAmount } = useProductLabels()
 
 const loading = ref(true)
 const product = ref<any>(null)

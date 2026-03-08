@@ -90,6 +90,25 @@ export function useProductLabels() {
     return centsToAmount(original - promotion)
   }
 
+  const hasSkuPromotionPrice = (sku: any) => {
+    if (!sku) return false
+    const original = parsePriceAmount(sku.price_amount)
+    const promotion = parsePriceAmount(sku.promotion_price_amount)
+    if (original === null || promotion === null) return false
+    return promotion >= 0 && promotion < original
+  }
+
+  const getSkuPromotionPriceAmount = (sku: any) => sku?.promotion_price_amount
+
+  const getSkuPromotionSaveAmount = (sku: any) => {
+    const original = parsePriceAmount(sku?.price_amount)
+    const promotion = parsePriceAmount(sku?.promotion_price_amount)
+    if (original === null || promotion === null || promotion >= original) {
+      return '0.00'
+    }
+    return centsToAmount(original - promotion)
+  }
+
   return {
     getPurchaseTypeLabel,
     getFulfillmentTypeLabel,
@@ -99,5 +118,8 @@ export function useProductLabels() {
     hasPromotionPrice,
     getPromotionPriceAmount,
     getPromotionSaveAmount,
+    hasSkuPromotionPrice,
+    getSkuPromotionPriceAmount,
+    getSkuPromotionSaveAmount,
   }
 }
