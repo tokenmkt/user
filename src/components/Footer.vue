@@ -88,9 +88,21 @@
             </a>
           </p>
         </div>
-        <div class="flex space-x-4">
-          <router-link to="/privacy" class="hover:text-gray-900 dark:hover:text-gray-400">{{ t('footer.privacy') || 'Privacy Policy' }}</router-link>
-          <router-link to="/terms" class="hover:text-gray-900 dark:hover:text-gray-400">{{ t('footer.terms') || 'Terms of Service' }}</router-link>
+        <div class="flex flex-col items-center gap-2 md:items-end">
+          <div class="flex flex-wrap items-center gap-x-4 gap-y-1 justify-center md:justify-end">
+            <router-link to="/privacy" class="hover:text-gray-900 dark:hover:text-gray-400">{{ t('footer.privacy') || 'Privacy Policy' }}</router-link>
+            <router-link to="/terms" class="hover:text-gray-900 dark:hover:text-gray-400">{{ t('footer.terms') || 'Terms of Service' }}</router-link>
+          </div>
+          <div v-if="footerLinks.length" class="flex flex-wrap items-center gap-x-4 gap-y-1 justify-center md:justify-end">
+            <a
+              v-for="link in footerLinks"
+              :key="link.name"
+              :href="link.url || 'javascript:void(0)'"
+              :target="link.url ? '_blank' : undefined"
+              rel="noopener noreferrer"
+              class="hover:text-gray-900 dark:hover:text-gray-400"
+            >{{ link.name }}</a>
+          </div>
         </div>
       </div>
     </div>
@@ -122,6 +134,12 @@ const quickLinks = [
   { path: '/blog', label: 'nav.blog' },
   { path: '/about', label: 'nav.about' },
 ]
+
+const footerLinks = computed(() => {
+  const links = config.value?.footer_links
+  if (!Array.isArray(links)) return []
+  return links.filter((item: any) => item && typeof item.name === 'string' && item.name.trim())
+})
 
 const currentYear = new Date().getFullYear()
 </script>
