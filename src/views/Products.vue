@@ -153,11 +153,11 @@
         <!-- Main Content - Products Grid -->
         <main class="flex-1">
           <!-- Loading Skeleton -->
-          <div v-if="loading" class="grid grid-cols-2 gap-4 md:gap-6 lg:grid-cols-3">
-            <div v-for="i in 6" :key="i"
+          <div v-if="loading" class="grid grid-cols-2 gap-3 md:gap-4 md:grid-cols-3 xl:grid-cols-4">
+            <div v-for="i in 8" :key="i"
               class="theme-panel rounded-2xl border overflow-hidden flex flex-col">
-              <div class="h-36 md:h-56 theme-skeleton"></div>
-              <div class="p-3 md:p-5 space-y-3">
+              <div class="h-36 md:h-44 lg:h-40 theme-skeleton"></div>
+              <div class="p-3 md:p-4 space-y-3">
                 <div class="h-3 w-16 rounded theme-skeleton"></div>
                 <div class="h-5 w-3/4 rounded theme-skeleton"></div>
                 <div class="flex gap-2">
@@ -176,7 +176,7 @@
 
           <!-- Products Grid -->
           <div v-else-if="products.length > 0">
-            <div class="grid grid-cols-2 gap-4 md:gap-6 lg:grid-cols-3">
+            <div class="grid grid-cols-2 gap-3 md:gap-4 md:grid-cols-3 xl:grid-cols-4">
               <div v-for="(product, idx) in products" :key="product.id"
                 class="group relative theme-panel rounded-2xl border transition-all overflow-hidden flex flex-col h-full theme-slide-up"
                 :class="isSoldOut(product)
@@ -185,7 +185,7 @@
                 :style="{ animationDelay: `${idx * 50}ms` }"
                 @click="goToProduct(product.slug)">
                 <!-- Image Area -->
-                <div class="h-36 md:h-56 overflow-hidden theme-surface-muted relative shrink-0">
+                <div class="h-36 md:h-44 lg:h-40 overflow-hidden theme-surface-muted relative shrink-0">
                   <div class="absolute inset-0 bg-black/15 z-10"></div>
                   <img v-if="product.images && getFirstImageUrl(product.images)" :src="getFirstImageUrl(product.images)"
                     :alt="getLocalizedText(product.title)"
@@ -219,7 +219,7 @@
                 </div>
 
                 <!-- Content Area -->
-                <div class="p-3 md:p-5 relative z-20 flex flex-col flex-1">
+                <div class="p-3 md:p-4 relative z-20 flex flex-col flex-1">
                   <div v-if="product.category?.name" class="text-xs theme-text-muted uppercase tracking-wider mb-1 md:mb-2 truncate">
                     {{ t('products.categoryLabel') }} · {{ getLocalizedText(product.category.name) }}
                   </div>

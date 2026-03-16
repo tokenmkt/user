@@ -119,7 +119,7 @@
           </router-link>
         </div>
 
-        <div v-if="products.length > 0" class="grid grid-cols-2 gap-4 md:gap-6 lg:grid-cols-3">
+        <div v-if="products.length > 0" class="grid grid-cols-2 gap-3 md:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
           <article
             v-for="(product, idx) in products"
             :key="product.id"
@@ -130,7 +130,7 @@
               : 'hover:-translate-y-1 hover:shadow-lg'"
             @click="goToProduct(product.slug)"
           >
-            <div class="relative h-36 md:h-56 overflow-hidden theme-surface-muted shrink-0">
+            <div class="relative h-36 md:h-44 lg:h-40 overflow-hidden theme-surface-muted shrink-0">
               <img
                 v-if="product.images && getFirstImageUrl(product.images)"
                 :src="getFirstImageUrl(product.images)"
@@ -158,7 +158,7 @@
                 </span>
               </div>
             </div>
-            <div class="space-y-2 p-3 md:p-5">
+            <div class="space-y-1.5 p-3 md:p-4">
               <h3 class="line-clamp-1 text-sm md:text-base font-semibold theme-text-primary">{{ getLocalizedText(product.title) }}</h3>
 
               <!-- Simplified badges for home: only show stock status (non-in-stock) and fulfillment type -->
@@ -410,7 +410,7 @@ const goToPost = (slug: string) => {
 
 const loadFeaturedProducts = async () => {
   try {
-    const response = await productAPI.list({ page: 1, page_size: 9 })
+    const response = await productAPI.list({ page: 1, page_size: 15 })
     products.value = response.data.data || []
   } catch (error) {
     console.error('Failed to load products:', error)
