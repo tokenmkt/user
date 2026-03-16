@@ -2,7 +2,12 @@
   <div class="min-h-screen theme-page pt-24 pb-16">
     <div class="container mx-auto px-4">
       <div class="mb-8">
-        <h1 class="text-3xl font-black theme-text-primary mb-2">{{ t('guestOrders.title') }}</h1>
+        <h1 class="text-3xl font-black theme-text-primary mb-2 flex items-center gap-3">
+          <svg class="w-8 h-8 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+          </svg>
+          {{ t('guestOrders.title') }}
+        </h1>
         <p class="theme-text-muted text-sm">{{ t('guestOrders.subtitle') }}</p>
       </div>
 
@@ -26,7 +31,10 @@
             class="form-input-lg"
             :placeholder="t('guestOrders.orderNoPlaceholder')" />
           <button @click="handleSearch" :disabled="loading"
-            class="theme-btn-primary rounded-xl font-bold px-6 py-3 transition-colors disabled:opacity-50">
+            class="theme-btn-primary rounded-xl font-bold px-6 py-3 transition-colors disabled:opacity-50 inline-flex items-center justify-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
             {{ loading ? t('guestOrders.searching') : t('guestOrders.search') }}
           </button>
         </div>
@@ -38,6 +46,9 @@
 
       <div v-if="orders.length === 0 && !loading"
         class="theme-panel rounded-2xl p-12 text-center">
+        <svg class="mx-auto h-16 w-16 mb-4 theme-text-muted opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+        </svg>
         <p class="theme-text-muted">{{ emptyMessage }}</p>
       </div>
 
@@ -64,11 +75,18 @@
               {{ statusLabel(order.status) }}
             </span>
             <router-link :to="`/guest/orders/${order.order_no}`"
-              class="px-4 py-2 rounded-lg border theme-btn-secondary text-sm">
+              class="px-4 py-2 rounded-lg border theme-btn-secondary text-sm inline-flex items-center gap-1.5">
+              <svg class="w-4 h-4 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
               {{ t('guestOrders.viewDetails') }}
             </router-link>
             <router-link v-if="order.status === 'pending_payment'" :to="`/pay?guest=1&order_no=${order.order_no}`"
-              class="px-4 py-2 rounded-lg theme-btn-primary font-bold text-sm">
+              class="px-4 py-2 rounded-lg theme-btn-primary font-bold text-sm inline-flex items-center gap-1.5">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+              </svg>
               {{ t('guestOrders.payNow') }}
             </router-link>
           </div>
@@ -77,7 +95,10 @@
 
       <div v-if="pagination.total_page > 1" class="flex items-center justify-center gap-4 mt-10">
         <button @click="changePage(pagination.page - 1)" :disabled="pagination.page <= 1"
-          class="px-4 py-2 rounded-lg border theme-btn-secondary text-sm disabled:opacity-40">
+          class="px-4 py-2 rounded-lg border theme-btn-secondary text-sm disabled:opacity-40 inline-flex items-center gap-1.5">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+          </svg>
           {{ t('guestOrders.prevPage') }}
         </button>
         <span class="text-sm theme-text-muted">{{ t('guestOrders.pageInfo', {
@@ -85,8 +106,11 @@
             pagination.total_page
         }) }}</span>
         <button @click="changePage(pagination.page + 1)" :disabled="pagination.page >= pagination.total_page"
-          class="px-4 py-2 rounded-lg border theme-btn-secondary text-sm disabled:opacity-40">
+          class="px-4 py-2 rounded-lg border theme-btn-secondary text-sm disabled:opacity-40 inline-flex items-center gap-1.5">
           {{ t('guestOrders.nextPage') }}
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
         </button>
       </div>
     </div>

@@ -12,8 +12,11 @@
       <!-- Desktop Menu -->
       <div class="hidden md:flex items-center space-x-1">
         <router-link v-for="item in menuItems" :key="item.path" :to="item.path"
-          class="theme-nav-link text-sm relative group overflow-hidden"
+          class="theme-nav-link text-sm relative group overflow-hidden flex items-center gap-1.5"
           active-class="theme-nav-link-active">
+          <svg class="w-4 h-4 shrink-0 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" :d="item.icon" />
+          </svg>
           <span class="relative z-10">{{ t(item.label) }}</span>
         </router-link>
       </div>
@@ -36,19 +39,31 @@
         </router-link>
 
         <router-link v-if="!userAuthStore.isAuthenticated" to="/guest/orders"
-          class="hidden md:inline-flex theme-nav-link">
+          class="hidden md:inline-flex theme-nav-link items-center gap-1.5">
+          <svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+          </svg>
           {{ t('navbar.guestOrders') }}
         </router-link>
         <router-link v-if="!userAuthStore.isAuthenticated" to="/auth/login"
-          class="hidden md:inline-flex theme-nav-link">
+          class="hidden md:inline-flex theme-nav-link items-center gap-1.5">
+          <svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+          </svg>
           {{ t('navbar.login') }}
         </router-link>
         <router-link v-if="userAuthStore.isAuthenticated" to="/me"
-          class="hidden md:inline-flex theme-nav-link">
+          class="hidden md:inline-flex theme-nav-link items-center gap-1.5">
+          <svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+          </svg>
           {{ t('navbar.personalCenter') }}
         </router-link>
         <button v-if="userAuthStore.isAuthenticated" @click="userAuthStore.logout()"
-          class="hidden md:inline-flex px-3 py-2 rounded-lg text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-white hover:bg-red-50 dark:hover:bg-red-500/10 transition-all border border-transparent hover:border-red-200 dark:hover:border-red-500/20 text-xs font-medium">
+          class="hidden md:inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-white hover:bg-red-50 dark:hover:bg-red-500/10 transition-all border border-transparent hover:border-red-200 dark:hover:border-red-500/20 text-xs font-medium">
+          <svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+          </svg>
           {{ t('navbar.logout') }}
         </button>
         <!-- Theme Switcher -->
@@ -136,21 +151,30 @@
 
           <!-- Navigation items not in bottom nav: Blog, Notice, About -->
           <router-link v-for="item in mobileDrawerItems" :key="item.path" :to="item.path" @click="showMobileMenu = false"
-            class="block w-full text-left px-4 py-3 rounded-xl theme-nav-link text-sm min-h-[44px] flex items-center"
+            class="block w-full text-left px-4 py-3 rounded-xl theme-nav-link text-sm min-h-[44px] flex items-center gap-3"
             active-class="theme-nav-link-active">
+            <svg class="w-5 h-5 shrink-0 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" :d="item.icon" />
+            </svg>
             {{ t(item.label) }}
           </router-link>
 
           <!-- Guest orders (not in bottom nav) -->
           <router-link v-if="!userAuthStore.isAuthenticated" to="/guest/orders" @click="showMobileMenu = false"
-            class="block w-full text-left px-4 py-3 rounded-xl theme-nav-link text-sm min-h-[44px] flex items-center"
+            class="block w-full text-left px-4 py-3 rounded-xl theme-nav-link text-sm min-h-[44px] flex items-center gap-3"
             active-class="theme-nav-link-active">
+            <svg class="w-5 h-5 shrink-0 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+            </svg>
             {{ t('navbar.guestOrders') }}
           </router-link>
 
           <!-- Logout (login/me already in bottom nav) -->
           <button v-if="userAuthStore.isAuthenticated" @click="userAuthStore.logout(); showMobileMenu = false"
-            class="w-full text-left px-4 py-3 rounded-xl text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors font-medium min-h-[44px] flex items-center">
+            class="w-full text-left px-4 py-3 rounded-xl text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors font-medium min-h-[44px] flex items-center gap-3">
+            <svg class="w-5 h-5 shrink-0 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
             {{ t('navbar.logout') }}
           </button>
 
@@ -196,18 +220,18 @@ const scrolled = ref(false)
 const cartBounce = ref(false)
 
 const menuItems = [
-  { path: '/', label: 'nav.home' },
-  { path: '/products', label: 'nav.products' },
-  { path: '/blog', label: 'nav.blog' },
-  { path: '/notice', label: 'nav.notice' },
-  { path: '/about', label: 'nav.about' },
+  { path: '/', label: 'nav.home', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1' },
+  { path: '/products', label: 'nav.products', icon: 'M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z' },
+  { path: '/blog', label: 'nav.blog', icon: 'M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2' },
+  { path: '/notice', label: 'nav.notice', icon: 'M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9' },
+  { path: '/about', label: 'nav.about', icon: 'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z' },
 ]
 
 // Mobile drawer only shows items NOT in the bottom nav (Home, Products, Cart, Me are in bottom nav)
 const mobileDrawerItems = [
-  { path: '/blog', label: 'nav.blog' },
-  { path: '/notice', label: 'nav.notice' },
-  { path: '/about', label: 'nav.about' },
+  { path: '/blog', label: 'nav.blog', icon: 'M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2' },
+  { path: '/notice', label: 'nav.notice', icon: 'M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9' },
+  { path: '/about', label: 'nav.about', icon: 'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z' },
 ]
 
 const languages = [

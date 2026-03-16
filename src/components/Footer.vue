@@ -33,9 +33,10 @@
           <h4 class="theme-text-primary font-bold mb-6 tracking-wide">{{ t('footer.quickLinks') }}</h4>
           <ul class="space-y-3 text-sm">
             <li v-for="item in quickLinks" :key="item.path">
-              <router-link :to="item.path" class="theme-link-muted transition-colors flex items-center group">
-                <span
-                  class="w-1.5 h-1.5 bg-gray-400 dark:bg-gray-700 rounded-full mr-2 transition-colors"></span>
+              <router-link :to="item.path" class="theme-link-muted transition-colors flex items-center gap-2 group">
+                <svg class="w-4 h-4 shrink-0 opacity-50 group-hover:opacity-80 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" :d="item.icon" />
+                </svg>
                 {{ t(item.label) }}
               </router-link>
             </li>
@@ -129,10 +130,10 @@ const brandInitial = computed(() => {
 })
 
 const quickLinks = [
-  { path: '/', label: 'nav.home' },
-  { path: '/products', label: 'nav.products' },
-  { path: '/blog', label: 'nav.blog' },
-  { path: '/about', label: 'nav.about' },
+  { path: '/', label: 'nav.home', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1' },
+  { path: '/products', label: 'nav.products', icon: 'M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z' },
+  { path: '/blog', label: 'nav.blog', icon: 'M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2' },
+  { path: '/about', label: 'nav.about', icon: 'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z' },
 ]
 
 const footerLinks = computed(() => {
