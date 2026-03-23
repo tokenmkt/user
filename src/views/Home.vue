@@ -1,6 +1,6 @@
 <template>
   <div class="home-page min-h-screen theme-page">
-    <section class="relative z-10 border-b theme-border pt-24 pb-10">
+    <section v-if="showHeroSection" class="relative z-10 border-b theme-border pt-24 pb-10">
       <div class="container mx-auto px-4">
         <div class="relative overflow-hidden rounded-2xl border theme-panel"
           @touchstart="onBannerTouchStart"
@@ -11,7 +11,7 @@
           </Transition>
           <div class="absolute inset-0 bg-black/50"></div>
 
-            <div v-if="bannerLoading" class="relative flex min-h-[420px] flex-col justify-between p-8 md:p-12">
+            <div v-if="bannerLoading" class="relative flex min-h-[260px] flex-col justify-between p-5 sm:min-h-[320px] sm:p-6 md:min-h-[420px] md:p-12">
             <div class="mb-4 flex items-center justify-end">
               <span class="theme-badge theme-badge-inverse text-xs font-medium">
                 {{ t('common.loading') }}
@@ -30,11 +30,11 @@
             </div>
           </div>
 
-          <div v-else class="relative flex min-h-[420px] flex-col justify-between p-8 md:p-12">
+          <div v-else class="relative flex min-h-[260px] flex-col justify-between p-5 sm:min-h-[320px] sm:p-6 md:min-h-[420px] md:p-12">
             <div v-if="bannerCount > 1" class="mb-4 flex items-center justify-end gap-2">
               <button
                 type="button"
-                class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/30 bg-black/20 text-white transition hover:bg-black/35"
+                class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/30 bg-black/20 text-white transition hover:bg-black/35 md:h-10 md:w-10"
                 @click="handlePrevHeroBanner"
                 :aria-label="t('common.previousBanner')"
               >
@@ -44,7 +44,7 @@
               </button>
               <button
                 type="button"
-                class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/30 bg-black/20 text-white transition hover:bg-black/35"
+                class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/30 bg-black/20 text-white transition hover:bg-black/35 md:h-10 md:w-10"
                 @click="handleNextHeroBanner"
                 :aria-label="t('common.nextBanner')"
               >
@@ -54,24 +54,24 @@
               </button>
             </div>
 
-            <div class="space-y-4">
+            <div class="space-y-3 sm:space-y-4">
               <span class="theme-badge theme-badge-inverse gap-2 text-xs font-semibold uppercase tracking-wider">
                 <span class="h-2 w-2 rounded-full bg-emerald-300"></span>
                 {{ heroBadge }}
               </span>
-              <h1 class="max-w-4xl text-3xl font-semibold tracking-[-0.02em] text-white md:text-[2.85rem]">
+              <h1 class="max-w-4xl text-2xl font-semibold tracking-[-0.02em] text-white sm:text-3xl md:text-[2.85rem]">
                 {{ heroTitle }}
               </h1>
-              <p class="max-w-3xl text-sm leading-relaxed text-gray-100 md:text-base">
+              <p class="max-w-3xl text-xs leading-relaxed text-gray-100 sm:text-sm md:text-base">
                 {{ heroSubtitle }}
               </p>
             </div>
 
-            <div class="flex flex-wrap items-center gap-3 pt-6">
+            <div class="flex flex-wrap items-center gap-3 pt-5 sm:pt-6">
               <button
                 type="button"
                 @click="goToHeroLink"
-                class="inline-flex items-center gap-2 rounded-lg bg-white px-5 py-3 text-sm font-semibold text-gray-900 transition hover:scale-105 min-h-[44px]"
+                class="inline-flex min-h-[40px] items-center gap-2 rounded-lg bg-white px-4 py-2.5 text-sm font-semibold text-gray-900 transition hover:scale-105 sm:min-h-[44px] sm:px-5 sm:py-3"
               >
                 {{ heroPrimaryButtonText }}
                 <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -81,7 +81,7 @@
               <router-link
                 v-if="!hasHeroLink"
                 to="/products"
-                class="inline-flex items-center rounded-lg border border-white/30 px-5 py-3 text-sm font-medium text-white transition hover:border-white hover:bg-white/10 min-h-[44px]"
+                class="inline-flex min-h-[40px] items-center rounded-lg border border-white/30 px-4 py-2.5 text-sm font-medium text-white transition hover:border-white hover:bg-white/10 sm:min-h-[44px] sm:px-5 sm:py-3"
               >
                 {{ t('home.featured.viewAll') }}
               </router-link>
@@ -103,7 +103,7 @@
       </div>
     </section>
 
-    <section id="featured" class="relative z-10 py-14">
+    <section id="featured" class="relative z-10 pb-14" :class="showHeroSection ? 'pt-14' : 'pt-32 md:pt-36'">
       <div class="container mx-auto px-4">
         <div class="mb-8 flex items-end justify-between gap-4">
           <div>
@@ -209,6 +209,7 @@ const onBannerTouchEnd = (e: TouchEvent) => {
 }
 
 const bannerCount = computed(() => banners.value.length)
+const showHeroSection = computed(() => bannerLoading.value || bannerCount.value > 0)
 
 const heroBanner = computed(() => {
   if (banners.value.length === 0) return null
