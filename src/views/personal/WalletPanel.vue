@@ -323,7 +323,13 @@ const readRouteQueryValue = (key: string): string => {
   return ''
 }
 
-const rechargeNoFromRoute = computed(() => readRouteQueryValue('recharge_no'))
+const rechargeNoFromRoute = computed(() => {
+  const rechargeNo = readRouteQueryValue('recharge_no')
+  if (rechargeNo !== '') return rechargeNo
+  const orderNo = readRouteQueryValue('order_no')
+  if (/^WR/i.test(orderNo)) return orderNo
+  return ''
+})
 const hasRechargeReturnMarker = computed(() => {
   if (rechargeReturnMarkers.some((marker) => readRouteQueryValue(marker).toLowerCase() === '1')) {
     return true
