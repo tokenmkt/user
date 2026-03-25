@@ -224,7 +224,7 @@
             </div>
 
             <!-- Quantity -->
-            <div class="mb-4 flex items-center justify-between">
+            <div class="mb-4 flex items-center gap-3">
               <span class="text-xs font-medium theme-text-muted">{{ t('quickBuy.quantity') }}</span>
               <div class="flex items-center rounded-lg border theme-border overflow-hidden">
                 <button
