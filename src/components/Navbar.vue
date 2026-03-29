@@ -133,7 +133,7 @@
       leave-active-class="transition duration-200 ease-in"
       leave-from-class="opacity-100"
       leave-to-class="opacity-0">
-      <div v-if="showMobileMenu" class="md:hidden fixed inset-0 z-[60] bg-black/50" @click="showMobileMenu = false" style="overscroll-behavior: none;"></div>
+      <div v-if="showMobileMenu" class="md:hidden fixed inset-0 z-[60] bg-black/50 cursor-pointer" @click="showMobileMenu = false" style="overscroll-behavior: none;"></div>
     </Transition>
 
     <!-- Mobile Drawer (only items NOT in bottom nav) -->
