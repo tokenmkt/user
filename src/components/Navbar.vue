@@ -297,7 +297,7 @@ const buildCustomNavItems = (): NavItem[] => {
       key: `custom-${item.id}`,
       path: item.url || '',
       label: getCustomItemTitle(item),
-      icon: presetIcons[item.icon as string] || defaultIcon,
+      icon: (presetIcons[item.icon as string] || defaultIcon) as string,
       type: item.link_type === 'external' ? 'link' as const : 'route' as const,
       target: item.target || '_self',
     }))
