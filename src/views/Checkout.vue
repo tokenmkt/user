@@ -124,87 +124,14 @@
             </div>
           </div>
 
-          <div
-            v-if="manualFormProducts.length"
-            class="rounded-2xl border theme-panel p-6"
-          >
-            <h2 class="mb-2 text-lg font-bold theme-text-primary">{{ t('checkout.manualFormTitle') }}</h2>
-            <p class="mb-4 text-xs theme-text-muted">{{ t('checkout.manualFormTip') }}</p>
-            <div class="space-y-5">
-              <div
-                v-for="manualItem in manualFormProducts"
-                :key="manualItem.itemKey"
-                class="rounded-xl border theme-surface-soft p-4"
-              >
-                <h3 class="mb-3 text-sm font-semibold theme-text-primary">{{ manualItemTitle(manualItem) }}</h3>
-                <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-                  <div v-for="field in manualItem.fields" :key="`${manualItem.itemKey}-${field.key}`" class="space-y-1.5">
-                    <label class="text-xs font-semibold theme-text-secondary">
-                      {{ getManualFieldLabel(field) }}
-                      <span v-if="field.required" class="ml-1 text-red-500">*</span>
-                    </label>
-
-                    <textarea
-                      v-if="field.type === 'textarea'"
-                      v-model="ensureManualFormRow(manualItem.itemKey)[field.key]"
-                      rows="3"
-                      class="w-full form-input-compact"
-                      :placeholder="getManualFieldPlaceholder(field)"
-                    />
-
-                    <select
-                      v-else-if="field.type === 'select'"
-                      v-model="ensureManualFormRow(manualItem.itemKey)[field.key]"
-                      class="w-full form-input-compact"
-                    >
-                      <option value="">{{ t('checkout.manualFormSelectPlaceholder') }}</option>
-                      <option v-for="option in field.options" :key="option" :value="option">{{ option }}</option>
-                    </select>
-
-                    <div v-else-if="field.type === 'radio'" class="space-y-2 rounded-xl border theme-surface-soft p-3">
-                      <label v-for="option in field.options" :key="option" class="flex items-center gap-2 text-sm theme-text-secondary">
-                        <input
-                          v-model="ensureManualFormRow(manualItem.itemKey)[field.key]"
-                          type="radio"
-                          :name="`manual-radio-${manualItem.itemKey}-${field.key}`"
-                          :value="option"
-                          class="h-4 w-4"
-                        />
-                        <span>{{ option }}</span>
-                      </label>
-                    </div>
-
-                    <div v-else-if="field.type === 'checkbox'" class="space-y-2 rounded-xl border theme-surface-soft p-3">
-                      <label v-for="option in field.options" :key="option" class="flex items-center gap-2 text-sm theme-text-secondary">
-                        <input
-                          v-model="ensureManualFormRow(manualItem.itemKey)[field.key]"
-                          type="checkbox"
-                          :value="option"
-                          class="h-4 w-4"
-                        />
-                        <span>{{ option }}</span>
-                      </label>
-                    </div>
-
-                    <input
-                      v-else
-                      v-model="ensureManualFormRow(manualItem.itemKey)[field.key]"
-                      :type="field.type === 'number' ? 'number' : field.type === 'email' ? 'email' : field.type === 'phone' ? 'tel' : 'text'"
-                      class="w-full form-input-compact"
-                      :placeholder="getManualFieldPlaceholder(field)"
-                    />
-
-                    <p
-                      v-if="submitAttempted && manualFieldError(manualItem.itemKey, field.key)"
-                      class="text-xs text-red-500"
-                    >
-                      {{ manualFieldError(manualItem.itemKey, field.key) }}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <CheckoutManualForm
+            :manual-form-products="manualFormProducts"
+            v-model="manualFormData"
+            :submit-attempted="submitAttempted"
+            :get-manual-field-label="getManualFieldLabel"
+            :get-manual-field-placeholder="getManualFieldPlaceholder"
+            :manual-field-error="manualFieldError"
+          />
 
           <div class="rounded-2xl border theme-panel p-6">
             <h2 class="mb-4 text-lg font-bold theme-text-primary">{{ t('checkout.couponTitle') }}</h2>
@@ -404,6 +331,7 @@ import { getImageUrl } from '../utils/image'
 import { getAffiliateCode, getAffiliateVisitorKey } from '../utils/affiliate'
 import ImageCaptcha from '../components/captcha/ImageCaptcha.vue'
 import TurnstileCaptcha from '../components/captcha/TurnstileCaptcha.vue'
+import CheckoutManualForm from '../components/checkout/CheckoutManualForm.vue'
 import { useLocalized } from '../composables/useProduct'
 
 const router = useRouter()
@@ -688,12 +616,7 @@ const getManualFieldPlaceholder = (field: ManualFormField) => {
 
 const manualFieldErrorKey = (itemKey: string, fieldKey: string) => `${itemKey}:${fieldKey}`
 
-const ensureManualFormRow = (itemKey: string) => {
-  if (!manualFormData.value[itemKey]) {
-    manualFormData.value[itemKey] = {}
-  }
-  return manualFormData.value[itemKey]
-}
+
 
 const manualFormValidation = computed(() => {
   const errors: Record<string, string> = {}
@@ -1148,12 +1071,6 @@ const checkoutItemImage = (item: CartItem) => {
   const rawImage = String(item.image || '').trim()
   if (!rawImage) return ''
   return getImageUrl(rawImage)
-}
-
-const manualItemTitle = (manualItem: ManualFormProduct) => {
-  const productTitle = getLocalizedText(manualItem.title)
-  if (manualItem.skuCount <= 1) return productTitle
-  return `${productTitle} (${t('checkout.manualFormAppliesToSkuCount', { count: manualItem.skuCount })})`
 }
 
 const itemSubtotal = (item: CartItem) => {

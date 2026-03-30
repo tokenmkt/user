@@ -35,6 +35,8 @@
         @click.self="close"
       >
         <div
+          role="dialog"
+          aria-modal="true"
           class="
             w-full max-h-[85vh] flex flex-col
             rounded-t-2xl md:rounded-2xl

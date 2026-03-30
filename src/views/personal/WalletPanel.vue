@@ -1,102 +1,29 @@
 <template>
   <div class="space-y-6">
-    <div class="theme-personal-card">
-      <div class="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div>
-          <h2 class="text-xl font-bold theme-text-primary">{{ t('personalCenter.wallet.title') }}</h2>
-          <p class="mt-1 text-sm theme-text-muted">{{ t('personalCenter.wallet.subtitle') }}</p>
-        </div>
-        <span class="theme-badge theme-badge-accent px-3 py-1 text-xs font-semibold">
-          {{ t('personalCenter.tabs.wallet') }}
-        </span>
-      </div>
+    <WalletBalanceCard
+      :alert="walletAlert"
+      :balance-display="balanceDisplay"
+      :total-transactions="pagination.total"
+      :current-page="pagination.page"
+      :total-pages="pagination.total_page"
+    />
 
-      <div v-if="walletAlert" class="mb-5 rounded-xl border px-4 py-3 text-sm shadow-sm" :class="pageAlertClass(walletAlert.level)">
-        {{ walletAlert.message }}
-      </div>
-
-      <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-        <div class="rounded-xl border theme-surface-soft p-4">
-          <div class="text-xs theme-text-muted">{{ t('personalCenter.wallet.balanceLabel') }}</div>
-          <div class="mt-2 text-lg font-bold theme-text-primary">{{ balanceDisplay }}</div>
-        </div>
-        <div class="rounded-xl border theme-surface-soft p-4">
-          <div class="text-xs theme-text-muted">{{ t('personalCenter.wallet.transactionsLabel') }}</div>
-          <div class="mt-2 text-lg font-bold theme-text-primary">{{ pagination.total }}</div>
-        </div>
-        <div class="rounded-xl border theme-surface-soft p-4">
-          <div class="text-xs theme-text-muted">{{ t('personalCenter.wallet.currentPageLabel') }}</div>
-          <div class="mt-2 text-lg font-bold theme-text-primary">
-            {{ t('orders.pageInfo', { page: pagination.page, total: pagination.total_page }) }}
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="theme-personal-card">
-      <h3 class="text-lg font-bold theme-text-primary">{{ t('personalCenter.wallet.rechargeTitle') }}</h3>
-      <p class="mt-1 text-sm theme-text-muted">{{ t('personalCenter.wallet.rechargeSubtitle') }}</p>
-      <form class="mt-6 grid grid-cols-1 gap-4 md:grid-cols-[1fr_1fr_2fr_auto]" @submit.prevent="handleRecharge">
-        <div>
-          <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-200">{{ t('personalCenter.wallet.amountLabel') }}</label>
-          <input
-            v-model.trim="rechargeForm.amount"
-            type="text"
-            inputmode="decimal"
-            :placeholder="t('personalCenter.wallet.amountPlaceholder')"
-            class="w-full form-input-lg"
-          />
-        </div>
-        <div>
-          <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-200">{{ t('personalCenter.wallet.channelLabel') }}</label>
-          <select
-            v-model.number="rechargeForm.channelId"
-            class="w-full form-input-lg"
-            :disabled="!hasChannels || recharging"
-          >
-            <option :value="0">{{ t('personalCenter.wallet.channelPlaceholder') }}</option>
-            <option v-for="channel in channels" :key="channel.id" :value="channel.id">
-              {{ channel.name }}
-            </option>
-          </select>
-        </div>
-        <div>
-          <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-200">{{ t('personalCenter.wallet.remarkLabel') }}</label>
-          <input
-            v-model.trim="rechargeForm.remark"
-            type="text"
-            :placeholder="t('personalCenter.wallet.remarkPlaceholder')"
-            class="w-full form-input-lg"
-          />
-        </div>
-        <div class="flex items-end">
-          <button
-            type="submit"
-            :disabled="recharging || !hasChannels"
-            class="inline-flex h-11 w-full items-center justify-center rounded-xl theme-btn-primary px-5 text-sm font-bold transition-colors disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            {{ recharging ? t('personalCenter.wallet.recharging') : t('personalCenter.wallet.rechargeSubmit') }}
-          </button>
-        </div>
-      </form>
-      <div v-if="selectedChannel" class="mt-4 grid grid-cols-1 gap-3 text-sm md:grid-cols-3">
-        <div class="rounded-xl border theme-surface-soft p-4">
-          <div class="text-xs theme-text-muted">{{ t('payment.feeRateLabel') }}</div>
-          <div class="mt-1 font-semibold theme-text-primary">{{ selectedChannelFeeRateDisplay }}</div>
-        </div>
-        <div class="rounded-xl border theme-surface-soft p-4">
-          <div class="text-xs theme-text-muted">{{ t('payment.fixedFeeLabel') }}</div>
-          <div class="mt-1 font-semibold theme-text-primary">{{ selectedChannelFixedFeeDisplay }}</div>
-        </div>
-        <div class="rounded-xl border theme-surface-soft p-4">
-          <div class="text-xs theme-text-muted">{{ t('payment.feeAmountLabel') }}</div>
-          <div class="mt-1 font-semibold theme-text-primary">{{ selectedChannelFeeAmountDisplay }}</div>
-        </div>
-      </div>
-      <p v-if="!hasChannels" class="mt-3 text-xs text-amber-600">
-        {{ t('payment.channelEmpty') }}
-      </p>
-    </div>
+    <WalletRechargeForm
+      :amount="rechargeForm.amount"
+      :channel-id="rechargeForm.channelId"
+      :remark="rechargeForm.remark"
+      :channels="channels"
+      :has-channels="hasChannels"
+      :recharging="recharging"
+      :selected-channel="selectedChannel"
+      :fee-rate-display="selectedChannelFeeRateDisplay"
+      :fixed-fee-display="selectedChannelFixedFeeDisplay"
+      :fee-amount-display="selectedChannelFeeAmountDisplay"
+      @update:amount="rechargeForm.amount = $event"
+      @update:channel-id="rechargeForm.channelId = $event"
+      @update:remark="rechargeForm.remark = $event"
+      @submit="handleRecharge"
+    />
 
     <div v-if="currentRecharge && currentRechargePayment" class="theme-personal-card">
       <h3 class="text-lg font-bold theme-text-primary">{{ t('personalCenter.wallet.paymentInfoTitle') }}</h3>
@@ -176,77 +103,14 @@
       </div>
     </div>
 
-    <div class="theme-personal-card">
-      <div class="mb-4 flex items-center justify-between">
-        <h3 class="text-lg font-bold theme-text-primary">{{ t('personalCenter.wallet.detailTitle') }}</h3>
-        <button
-          type="button"
-          class="inline-flex items-center rounded-lg border theme-btn-secondary px-3 py-1.5 text-xs font-semibold"
-          @click="refreshCurrentPage"
-        >
-          {{ t('orders.filters.refresh') }}
-        </button>
-      </div>
-
-      <div v-if="loading" class="space-y-3">
-        <div v-for="idx in 3" :key="idx" class="h-16 animate-pulse rounded-xl border theme-surface-muted"></div>
-      </div>
-      <div v-else-if="transactions.length === 0" class="rounded-xl border border-dashed theme-surface-soft px-4 py-6 text-sm theme-text-muted">
-        {{ t('personalCenter.wallet.empty') }}
-      </div>
-      <div v-else class="overflow-x-auto rounded-xl border border-gray-200/70 dark:border-white/10">
-        <table class="min-w-full divide-y divide-gray-200 text-left text-sm dark:divide-white/10">
-          <thead class="bg-gray-50/80 text-xs uppercase tracking-wide text-gray-500 dark:bg-white/5 dark:text-gray-400">
-            <tr>
-              <th class="px-4 py-3 font-semibold">{{ t('personalCenter.wallet.table.createdAt') }}</th>
-              <th class="px-4 py-3 font-semibold">{{ t('personalCenter.wallet.table.type') }}</th>
-              <th class="px-4 py-3 font-semibold">{{ t('personalCenter.wallet.table.direction') }}</th>
-              <th class="px-4 py-3 font-semibold">{{ t('personalCenter.wallet.table.amount') }}</th>
-              <th class="px-4 py-3 font-semibold">{{ t('personalCenter.wallet.table.balanceAfter') }}</th>
-              <th class="px-4 py-3 font-semibold">{{ t('personalCenter.wallet.table.remark') }}</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-gray-200 dark:divide-white/10">
-            <tr v-for="item in transactions" :key="item.id">
-              <td class="px-4 py-3 text-xs theme-text-muted">{{ formatDate(item.created_at) }}</td>
-              <td class="px-4 py-3 text-xs theme-text-secondary">{{ transactionTypeLabel(item.type) }}</td>
-              <td class="px-4 py-3 text-xs">
-                <span class="theme-badge px-2.5 py-1 text-xs font-semibold" :class="directionClass(item.direction)">
-                  {{ directionLabel(item.direction) }}
-                </span>
-              </td>
-              <td class="px-4 py-3 font-mono text-sm" :class="item.direction === 'in' ? 'text-emerald-500' : 'text-rose-500'">
-                {{ signedAmount(item.direction, item.amount, item.currency) }}
-              </td>
-              <td class="px-4 py-3 font-mono text-sm theme-text-primary">
-                {{ formatMoney(item.balance_after, item.currency) }}
-              </td>
-              <td class="px-4 py-3 text-xs theme-text-muted">{{ item.remark || '-' }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div v-if="pagination.total_page > 1" class="mt-6 flex flex-wrap items-center justify-center gap-3">
-        <button
-          :disabled="pagination.page <= 1"
-          class="rounded-lg border theme-btn-secondary px-4 py-2 text-sm font-medium disabled:cursor-not-allowed disabled:opacity-40"
-          @click="changePage(pagination.page - 1)"
-        >
-          {{ t('orders.prevPage') }}
-        </button>
-        <span class="rounded-full border theme-pill-neutral px-4 py-2 text-sm">
-          {{ t('orders.pageInfo', { page: pagination.page, total: pagination.total_page }) }}
-        </span>
-        <button
-          :disabled="pagination.page >= pagination.total_page"
-          class="rounded-lg border theme-btn-secondary px-4 py-2 text-sm font-medium disabled:cursor-not-allowed disabled:opacity-40"
-          @click="changePage(pagination.page + 1)"
-        >
-          {{ t('orders.nextPage') }}
-        </button>
-      </div>
-    </div>
+    <WalletTransactionList
+      :loading="loading"
+      :transactions="transactions"
+      :current-page="pagination.page"
+      :total-pages="pagination.total_page"
+      @refresh="refreshCurrentPage"
+      @change-page="changePage"
+    />
   </div>
 </template>
 
@@ -257,9 +121,12 @@ import { useI18n } from 'vue-i18n'
 import { walletAPI } from '../../api'
 import { useAppStore } from '../../stores/app'
 import { useTelegramMiniAppStore } from '../../stores/telegramMiniApp'
-import { pageAlertClass, type PageAlert } from '../../utils/alerts'
+import type { PageAlert } from '../../utils/alerts'
 import { amountToCents, basisPointsToPercent, calculateFeeCents, centsToAmount, rateToBasisPoints } from '../../utils/money'
 import QRCode from 'qrcode'
+import WalletBalanceCard from '../../components/wallet/WalletBalanceCard.vue'
+import WalletRechargeForm from '../../components/wallet/WalletRechargeForm.vue'
+import WalletTransactionList from '../../components/wallet/WalletTransactionList.vue'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -459,39 +326,6 @@ const currentRechargeFeeAmountDisplay = computed(() => {
   const feeAmount = currentRecharge.value?.fee_amount ?? currentRechargePayment.value?.fee_amount ?? '0.00'
   return formatMoney(String(feeAmount), String(currentRecharge.value?.currency || currentRechargePayment.value?.currency || selectedChannelCurrency.value))
 })
-
-const formatDate = (raw?: string) => {
-  if (!raw) return '-'
-  const date = new Date(raw)
-  if (Number.isNaN(date.getTime())) return raw
-  return date.toLocaleString()
-}
-
-const directionLabel = (direction?: string) => {
-  if (direction === 'in') return t('personalCenter.wallet.directionIn')
-  if (direction === 'out') return t('personalCenter.wallet.directionOut')
-  return direction || '-'
-}
-
-const directionClass = (direction?: string) => {
-  if (direction === 'in') return 'theme-badge-success'
-  if (direction === 'out') return 'theme-badge-danger'
-  return 'theme-badge-warning'
-}
-
-const transactionTypeLabel = (type?: string) => {
-  const key = `personalCenter.wallet.types.${type || ''}`
-  const translated = t(key)
-  if (translated === key) return type || '-'
-  return translated
-}
-
-const signedAmount = (direction: string, amount?: string, currency?: string) => {
-  const base = formatMoney(amount, currency)
-  if (base === '-') return base
-  if (direction === 'out') return `-${base}`
-  return `+${base}`
-}
 
 const rechargeStatusLabel = (status?: string) => {
   const normalized = String(status || '').toLowerCase()

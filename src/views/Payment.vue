@@ -126,43 +126,20 @@
                   {{ t('payment.methodLabel') }}：{{ resultChannelName }}
                 </div>
               </div>
-              <div class="theme-surface-soft border rounded-2xl p-4">
-                <div class="text-xs uppercase tracking-wider theme-text-muted">{{ t('payment.payableAmountLabel') }}</div>
-                <div class="mt-1 text-2xl font-bold theme-text-primary">{{ payableAmountDisplay }}</div>
-                <div class="mt-4 space-y-2 text-xs">
-                  <div class="flex items-center justify-between gap-4">
-                    <span class="theme-text-muted">{{ t('orderDetail.amountTotal') }}</span>
-                    <span class="font-semibold theme-text-primary">{{ formatMoney(order.total_amount, order.currency) }}</span>
-                  </div>
-                  <div class="flex items-center justify-between gap-4">
-                    <span class="theme-text-muted">{{ t('payment.feeRateLabel') }}</span>
-                    <span class="font-medium theme-text-primary">{{ feeRateDisplay }}</span>
-                  </div>
-                  <div class="flex items-center justify-between gap-4">
-                    <span class="theme-text-muted">{{ t('payment.fixedFeeLabel') }}</span>
-                    <span class="font-medium theme-text-primary">{{ fixedFeeDisplay }}</span>
-                  </div>
-                  <div class="flex items-center justify-between gap-4">
-                    <span class="theme-text-muted">{{ t('payment.feeAmountLabel') }}</span>
-                    <span class="font-medium theme-text-primary">{{ feeAmountDisplay }}</span>
-                  </div>
-                  <div v-if="paymentResult.wallet_paid_amount !== undefined" class="flex items-center justify-between gap-4">
-                    <span class="theme-text-muted">{{ t('payment.walletDeductLabel') }}</span>
-                    <span class="font-medium theme-text-primary">{{ paymentWalletPaidDisplay }}</span>
-                  </div>
-                  <div v-if="paymentResult.online_pay_amount !== undefined" class="flex items-center justify-between gap-4">
-                    <span class="theme-text-muted">{{ t('payment.onlinePayLabel') }}</span>
-                    <span class="font-medium theme-text-primary">{{ paymentOnlinePayDisplay }}</span>
-                  </div>
-                </div>
-                <div v-if="showCountdown || pollingActive" class="mt-4 border-t border-gray-100 pt-3 text-xs dark:border-white/5">
-                  <div v-if="showCountdown" class="flex items-center justify-between gap-4">
-                    <span class="theme-text-muted">{{ t('payment.countdownLabel') }}</span>
-                    <span class="font-mono font-medium theme-text-primary">{{ countdownText }}</span>
-                  </div>
-                  <div v-if="pollingActive" class="mt-2 theme-text-muted">{{ t('payment.pollingHint') }}</div>
-                </div>
-              </div>
+              <PaymentAmountBreakdown
+                :order="order"
+                :payment-result="paymentResult"
+                :fee-rate-display="feeRateDisplay"
+                :fixed-fee-display="fixedFeeDisplay"
+                :fee-amount-display="feeAmountDisplay"
+                :payable-amount-display="payableAmountDisplay"
+                :wallet-paid-display="paymentWalletPaidDisplay"
+                :online-pay-display="paymentOnlinePayDisplay"
+                :show-countdown="showCountdown"
+                :countdown-text="countdownText"
+                :polling-active="pollingActive"
+                :format-money="formatMoney"
+              />
               <div v-if="paymentResult.expires_at"
                 class="theme-surface-soft border rounded-2xl p-4 text-xs theme-text-muted">
                 {{ t('payment.expiresAt') }}：{{ formatDate(paymentResult.expires_at) }}
@@ -319,32 +296,14 @@
                   </span>
                 </div>
               </div>
-              <div v-if="channels.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <button v-for="channel in channels" :key="channel.id" @click="selectedChannelId = channel.id"
-                  class="text-left border rounded-xl p-4 transition-colors"
-                  :class="selectedChannelId === channel.id ? 'theme-selected-surface' : 'theme-interactive-surface'">
-                  <div class="flex items-center justify-between gap-2">
-                    <div class="flex items-center gap-2">
-                      <img v-if="channel.icon" :src="getImageUrl(channel.icon)" class="h-5 w-5 rounded object-contain shrink-0" />
-                      <div class="theme-text-primary font-medium">{{ channel.name }}</div>
-                    </div>
-                    <span v-if="selectedChannelId === channel.id"
-                      class="theme-badge theme-badge-accent theme-badge-xs px-2 py-0.5">
-                      {{ t('payment.selected') }}
-                    </span>
-                  </div>
-                  <div class="mt-2 space-y-1 text-xs theme-text-muted">
-                    <div>{{ t('payment.feeLabel') }}：{{ formatChannelFeeRate(channel) }}</div>
-                    <div>{{ t('payment.fixedFeeLabel') }}：{{ formatChannelFixedFee(channel) }}</div>
-                  </div>
-              </button>
-              </div>
-              <div v-else-if="showBalanceOption" class="text-sm theme-text-muted">
-                {{ t('payment.channelEmptyUseBalance') }}
-              </div>
-              <div v-else class="text-sm theme-text-muted">
-                {{ t('payment.channelEmpty') }}
-              </div>
+              <PaymentChannelSelector
+                :channels="channels"
+                :model-value="selectedChannelId"
+                :show-balance-option="showBalanceOption"
+                :format-channel-fee-rate="formatChannelFeeRate"
+                :format-channel-fixed-fee="formatChannelFixedFee"
+                @update:model-value="selectedChannelId = $event"
+              />
             </template>
           </div>
 
@@ -459,7 +418,8 @@ import { debounceAsync } from '../utils/debounce'
 import { copyText } from '../utils/clipboard'
 import { amountToCents, basisPointsToPercent, calculateFeeCents, centsToAmount, rateToBasisPoints } from '../utils/money'
 import { buildSkuDisplayTextFromSnapshot } from '../utils/sku'
-import { getImageUrl } from '../utils/image'
+import PaymentAmountBreakdown from '../components/payment/PaymentAmountBreakdown.vue'
+import PaymentChannelSelector from '../components/payment/PaymentChannelSelector.vue'
 import QRCode from 'qrcode'
 import { pageAlertClass, type PageAlert } from '../utils/alerts'
 

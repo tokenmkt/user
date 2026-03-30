@@ -17,7 +17,19 @@
 
       <div v-else-if="!order"
         class="theme-panel rounded-2xl p-12 text-center">
-        <p class="theme-text-muted">{{ t('orderDetail.notFound') }}</p>
+        <svg class="mx-auto h-12 w-12 theme-text-muted opacity-50 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+        </svg>
+        <p class="theme-text-muted mb-4">{{ t('orderDetail.notFound') }}</p>
+        <button
+          @click="debouncedLoadOrder()"
+          class="inline-flex items-center gap-2 rounded-xl theme-btn-primary px-5 py-2.5 text-sm font-semibold"
+        >
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+          {{ t('errorBoundary.retry') }}
+        </button>
       </div>
 
       <div v-else class="space-y-6">
@@ -371,9 +383,12 @@ import { copyText } from '../utils/clipboard'
 import { amountToCents } from '../utils/money'
 import { buildSkuDisplayTextFromSnapshot } from '../utils/sku'
 import { getImageUrl } from '../utils/image'
+import { useConfirmDialog } from '../composables/useConfirmDialog'
+import { toast } from '../composables/useToast'
 
 const route = useRoute()
 const router = useRouter()
+const { confirm: showConfirm } = useConfirmDialog()
 const appStore = useAppStore()
 const { t } = useI18n()
 
@@ -438,13 +453,19 @@ const debouncedLoadOrder = debounceAsync(loadOrder, 300)
 
 const cancelOrder = async () => {
   if (!order.value) return
-  const confirmCancel = confirm(t('orderDetail.cancelConfirm'))
-  if (!confirmCancel) return
+  const confirmed = await showConfirm({
+    title: t('orderDetail.cancel'),
+    message: t('orderDetail.cancelConfirm'),
+    confirmText: t('common.confirm'),
+    cancelText: t('common.cancel'),
+    variant: 'danger',
+  })
+  if (!confirmed) return
   try {
     await userOrderAPI.cancel(order.value.id)
     await debouncedLoadOrder()
-  } catch (error) {
-    alert(t('orderDetail.cancelFailed'))
+  } catch {
+    toast.error(t('orderDetail.cancelFailed'))
   }
 }
 
