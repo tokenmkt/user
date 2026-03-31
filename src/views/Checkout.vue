@@ -373,7 +373,7 @@ const walletBalance = ref('0')
 const paymentChannels = computed(() => {
   const list = appStore.config?.payment_channels
   if (!Array.isArray(list)) return []
-  return list.filter((channel: any) => {
+  let filtered = list.filter((channel: any) => {
     const providerType = String(channel?.provider_type || '').toLowerCase()
     const channelType = String(channel?.channel_type || '').toLowerCase()
     if (providerType === 'epay') {
@@ -381,6 +381,28 @@ const paymentChannels = computed(() => {
     }
     return true
   })
+  // 按购物车中商品允许的支付渠道交集过滤
+  const items = cartItems.value
+  if (items.length > 0) {
+    let intersectionArr: number[] | null = null
+    for (const item of items) {
+      const ids = item.paymentChannelIds
+      if (!Array.isArray(ids) || ids.length === 0) continue
+      const idSet = new Set(ids.map(Number))
+      if (intersectionArr === null) {
+        intersectionArr = [...idSet]
+      } else {
+        intersectionArr = intersectionArr.filter((id) => idSet.has(id))
+      }
+    }
+    if (intersectionArr !== null && intersectionArr.length > 0) {
+      const allowedSet = new Set(intersectionArr)
+      filtered = filtered.filter((ch: any) => allowedSet.has(Number(ch?.id)))
+    } else if (intersectionArr !== null) {
+      filtered = []
+    }
+  }
+  return filtered
 })
 
 const showBalanceOption = computed(() => userAuthStore.isAuthenticated)

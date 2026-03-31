@@ -526,7 +526,7 @@ const configReady = computed(() => !appStore.loading && !!appStore.config)
 const channels = computed(() => {
   const list = appStore.config?.payment_channels
   if (!Array.isArray(list)) return []
-  return list.filter((channel: any) => {
+  let filtered = list.filter((channel: any) => {
     const providerType = String(channel?.provider_type || '').toLowerCase()
     const channelType = String(channel?.channel_type || '').toLowerCase()
     if (providerType === 'epay') {
@@ -534,6 +534,13 @@ const channels = computed(() => {
     }
     return true
   })
+  // 按订单中商品允许的支付渠道过滤
+  const allowedIds = order.value?.allowed_payment_channel_ids
+  if (Array.isArray(allowedIds) && allowedIds.length > 0) {
+    const allowedSet = new Set(allowedIds.map(Number))
+    filtered = filtered.filter((ch: any) => allowedSet.has(Number(ch?.id)))
+  }
+  return filtered
 })
 
 const normalizeID = (value: unknown) => String(value ?? '').trim()
