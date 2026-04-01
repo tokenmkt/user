@@ -572,6 +572,7 @@ const messages = {
             forgot: {
                 title: '找回密码',
                 subtitle: '验证邮箱后重置密码。',
+                disabled: '密码重置功能已关闭，请联系管理员修改密码。',
                 emailLabel: '邮箱',
                 emailPlaceholder: '请输入邮箱',
                 codeLabel: '验证码',
@@ -1567,6 +1568,7 @@ const messages = {
             forgot: {
                 title: '找回密碼',
                 subtitle: '驗證信箱後重設密碼。',
+                disabled: '密碼重置功能已關閉，請聯繫管理員修改密碼。',
                 emailLabel: '信箱',
                 emailPlaceholder: '請輸入信箱',
                 codeLabel: '驗證碼',
@@ -2523,6 +2525,7 @@ const messages = {
             forgot: {
                 title: 'Reset Password',
                 subtitle: 'Verify email to reset password.',
+                disabled: 'Password reset is disabled. Please contact the administrator to change your password.',
                 emailLabel: 'Email',
                 emailPlaceholder: 'Enter email',
                 codeLabel: 'Verification code',

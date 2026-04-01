@@ -109,6 +109,7 @@
               {{ t('auth.login.rememberMe') }}
             </label>
             <router-link
+              v-if="emailVerificationEnabled"
               to="/auth/forgot"
               class="font-medium theme-link-muted"
             >
@@ -241,6 +242,7 @@ const telegramBotUsername = computed(() => String(telegramConfig.value?.bot_user
 const telegramMiniAppURL = computed(() => String(telegramConfig.value?.mini_app_url || '').trim())
 const telegramEnabled = computed(() => !!telegramConfig.value?.enabled && telegramBotUsername.value !== '')
 const registrationEnabled = computed(() => appStore.config?.registration_enabled !== false)
+const emailVerificationEnabled = computed(() => appStore.config?.email_verification_enabled !== false)
 const isTelegramMiniApp = computed(() => telegramMiniAppStore.isMiniApp && telegramMiniAppStore.isReady)
 const miniAppInitData = computed(() => String(telegramMiniAppStore.initData || '').trim())
 const showTelegramWidget = computed(() => telegramEnabled.value && !isTelegramMiniApp.value)
