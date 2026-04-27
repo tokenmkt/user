@@ -78,7 +78,7 @@ function createClient(injectAuth: boolean) {
 
         const locale = getLocale()
         if (locale) {
-            headers['X-Lang'] = locale
+            headers['Accept-Language'] = locale
         }
 
         if (injectAuth) {
