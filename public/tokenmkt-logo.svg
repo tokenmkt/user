@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 180" role="img" aria-labelledby="tokenmktLogoTitle">
+  <title id="tokenmktLogoTitle">tokenmkt</title>
+  <defs>
+    <linearGradient id="tokenBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#26A3FF" />
+      <stop offset="100%" stop-color="#0A78E3" />
+    </linearGradient>
+    <linearGradient id="tokenGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFC94A" />
+      <stop offset="100%" stop-color="#F5A623" />
+    </linearGradient>
+  </defs>
+  <text
+    x="22"
+    y="128"
+    fill="url(#tokenBlue)"
+    font-family="Avenir Next, Trebuchet MS, Arial Rounded MT Bold, Helvetica Neue, Arial, sans-serif"
+    font-size="128"
+    font-weight="800"
+    letter-spacing="-5">token</text>
+  <text
+    x="400"
+    y="128"
+    fill="url(#tokenGold)"
+    font-family="Avenir Next, Trebuchet MS, Arial Rounded MT Bold, Helvetica Neue, Arial, sans-serif"
+    font-size="128"
+    font-weight="800"
+    letter-spacing="-5">mkt</text>
+</svg>

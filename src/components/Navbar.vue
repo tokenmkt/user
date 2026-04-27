@@ -5,8 +5,12 @@
     :style="{ transitionDuration: 'var(--ui-duration-normal)' }">
     <div class="container mx-auto px-4 flex items-center justify-between gap-4">
       <!-- Logo -->
-      <router-link to="/" class="theme-wordmark group relative" :title="brandSiteName">
-        <span class="theme-wordmark-text">{{ brandSiteName }}</span>
+      <router-link to="/" class="theme-wordmark group relative" :title="brandSiteName" :aria-label="brandSiteName">
+        <img
+          src="/tokenmkt-logo.svg"
+          alt="tokenmkt logo"
+          class="theme-wordmark-logo"
+        />
       </router-link>
 
       <!-- Desktop Menu -->
@@ -351,7 +355,7 @@ const cartCount = computed(() => cartStore.totalItems)
 
 const brandSiteName = computed(() => {
   const text = String(appStore.config?.brand?.site_name || '').trim()
-  return text !== '' ? text : 'Dujiao-Next'
+  return text !== '' ? text : 'tokenmkt'
 })
 
 const toggleMobileMenu = () => {

@@ -4,7 +4,7 @@ import { createI18n } from 'vue-i18n'
 const messages = {
     'zh-CN': {
         common: {
-            siteName: 'Dujiao-Next',
+            siteName: 'tokenmkt',
             loading: '加载中...',
             error: '错误',
             success: '成功',
@@ -92,7 +92,7 @@ const messages = {
         },
         home: {
             hero: {
-                title: 'Dujiao-Next · D&N',
+                title: 'tokenmkt',
                 subtitle: '专业的产品与服务提供商',
                 cta: '浏览商品',
                 badge: '新一代数字商店',
@@ -180,8 +180,8 @@ const messages = {
         },
         about: {
             title: '关于我们',
-            subtitle: '了解Dujiao-Next',
-            introduction: 'Dujiao-Next（D&N）是一家专业的在线工作室，致力于为客户提供优质的产品和服务。我们以创新、专业、高效为核心价值观，不断追求卓越，为客户创造价值。',
+            subtitle: '了解我们',
+            introduction: '我们专注于提供稳定、优质的数字产品与服务体验，持续围绕效率、可靠性与客户支持打磨每一个细节。',
             ourServices: '我们的服务',
             service1: '优质商品推荐与销售',
             service2: '专业的售前咨询服务',
@@ -1005,7 +1005,7 @@ const messages = {
     },
     'zh-TW': {
         common: {
-            siteName: 'Dujiao-Next',
+            siteName: 'tokenmkt',
             loading: '載入中...',
             error: '錯誤',
             success: '成功',
@@ -1093,7 +1093,7 @@ const messages = {
         },
         home: {
             hero: {
-                title: 'Dujiao-Next · D&N',
+                title: 'tokenmkt',
                 subtitle: '專業的產品與服務提供商',
                 cta: '瀏覽商品',
                 badge: '新一代數位商店',
@@ -1220,8 +1220,8 @@ const messages = {
         },
         about: {
             title: '關於我們',
-            subtitle: '了解Dujiao-Next',
-            introduction: 'Dujiao-Next（D&N）是一家專業的線上工作室，致力於為客戶提供優質的產品和服務。我們以創新、專業、高效為核心價值觀，不斷追求卓越，為客戶創造價值。',
+            subtitle: '了解我們',
+            introduction: '我們專注於提供穩定、優質的數位產品與服務體驗，持續圍繞效率、可靠性與客戶支援打磨每一個細節。',
             ourServices: '我們的服務',
             service1: '優質商品推薦與銷售',
             service2: '專業的售前諮詢服務',
@@ -2006,7 +2006,7 @@ const messages = {
     },
     'en-US': {
         common: {
-            siteName: 'Dujiao-Next',
+            siteName: 'tokenmkt',
             loading: 'Loading...',
             error: 'Error',
             success: 'Success',
@@ -2094,7 +2094,7 @@ const messages = {
         },
         home: {
             hero: {
-                title: 'Dujiao-Next',
+                title: 'tokenmkt',
                 subtitle: 'Professional Products and Services Provider',
                 cta: 'Browse Products',
                 badge: 'Next Gen Digital Store',
@@ -2221,8 +2221,8 @@ const messages = {
         },
         about: {
             title: 'About Us',
-            subtitle: 'Learn about Dujiao-Next',
-            introduction: 'Dujiao-Next is a professional online studio dedicated to providing high-quality products and services to our customers. Innovation, professionalism, and efficiency are our core values, and we constantly pursue excellence to create value for our customers.',
+            subtitle: 'Learn more about us',
+            introduction: 'We focus on delivering a dependable digital storefront experience with quality products, efficient workflows, and responsive customer support.',
             ourServices: 'Our Services',
             service1: 'Premium Product Recommendations & Sales',
             service2: 'Professional Pre-sales Consulting',

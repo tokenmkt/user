@@ -391,20 +391,16 @@ html[data-telegram-mini-app="true"] body {
   }
 
   .theme-wordmark {
-    @apply inline-flex items-center rounded-xl border px-3.5 sm:px-4;
+    @apply inline-flex items-center rounded-xl;
     min-height: 2.5rem;
     max-width: min(56vw, 20rem);
-    background-color: color-mix(in oklab, var(--ui-bg-elevated) 90%, var(--ui-accent-soft) 10%);
-    border-color: color-mix(in oklab, var(--ui-accent) 22%, var(--ui-border));
-    box-shadow: var(--ui-shadow-1);
-    color: var(--ui-text-primary);
-    transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+    transition: transform 0.2s ease, opacity 0.2s ease, filter 0.2s ease, box-shadow 0.2s ease;
   }
 
   .theme-wordmark:hover {
-    color: var(--ui-accent-hover);
-    border-color: color-mix(in oklab, var(--ui-accent) 42%, transparent);
-    background-color: color-mix(in oklab, var(--ui-accent-soft) 72%, var(--ui-bg-elevated));
+    opacity: 0.95;
+    filter: saturate(1.04);
+    transform: translateY(-1px);
   }
 
   .theme-wordmark:focus-visible {
@@ -412,15 +408,11 @@ html[data-telegram-mini-app="true"] body {
     box-shadow: 0 0 0 3px var(--ui-focus-ring);
   }
 
-  .theme-wordmark-text {
+  .theme-wordmark-logo {
     @apply block;
-    font-size: 1rem;
-    font-weight: 700;
-    letter-spacing: -0.018em;
-    line-height: 1;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    height: 2.25rem;
+    width: auto;
+    max-width: min(56vw, 15rem);
   }
 
   .theme-nav-link {
